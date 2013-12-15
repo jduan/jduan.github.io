@@ -16,6 +16,8 @@ application talks to the Authentication service (via a POST request) it
 keeps getting a zero HTTP status code. In generally, when a browser returns a
 zero status code, it means the browser cancelled the request for some reason.
 
+<!-- more -->
+
 Why could Opera cancel a request to the Authentication service? (Note
 that our application works fine on Chrome). Upon reading docs of CORS, I
 realize that certain CORS requests (say POST) require a **preflight** request

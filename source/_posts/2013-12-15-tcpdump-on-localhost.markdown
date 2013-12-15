@@ -10,6 +10,8 @@ categories: [TCP/IP]
 you to capture TCP/IP traffic over a network. It can be too smart sometimes.
 Here's a story of how I got baffled about tcpdump.
 
+<!-- more -->
+
 I was debugging some weird behavior of a production service and thought I'd
 bring up a local instance of the service, do a tcpdump, and see what's going on.
 
