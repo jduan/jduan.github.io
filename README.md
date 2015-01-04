@@ -18,4 +18,5 @@ jduan.github.io
 * The web server automatically reloads whenever you save your post
 
 # How to publish to github.io?
+* Run 'bundle exec rake generate'
 * Run 'bundle exec rake deploy'
