@@ -5,12 +5,13 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Furious Programming</title>
+  <title>Tcpdump on Localhost - Furious Programming</title>
   <meta name="author" content="Jingjing Duan">
 
   
-  <meta name="description" content="Functional languages have a concept of closure, which is a function that closes
-its enclosing environment. In other words, a function can access not &hellip;">
+  <meta name="description" content="tcpdump is a powerful tool that allows
+you to capture TCP/IP traffic over a network. It can be too smart sometimes.
+Here&rsquo;s a story of how I got &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -19,7 +20,7 @@ its enclosing environment. In other words, a function can access not &hellip;">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://jduan.github.io">
+  <link rel="canonical" href="http://jduan.github.io/blog/2013/12/15/tcpdump-on-localhost">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="Furious Programming" type="application/atom+xml">
@@ -64,110 +65,12 @@ its enclosing environment. In other words, a function can access not &hellip;">
 </nav>
   <div id="main">
     <div id="content">
-      <div class="blog-index">
+      <div>
+<article class="hentry" role="article">
   
-  
-  
-    <article>
-      
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2015/01/03/closures-in-python/">Closures in Python</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2015-01-03T23:05:52-08:00" pubdate data-updated="true">Jan 3<span>rd</span>, 2015</time>
-        
-           | <a href="/blog/2015/01/03/closures-in-python/#disqus_thread"
-             data-disqus-identifier="http://jduan.github.io/blog/2015/01/03/closures-in-python/">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Functional languages have a concept of closure, which is a function that closes
-its enclosing environment. In other words, a function can access not only its
-local variables, but also the non-local variables (aka free variables) of its
-enclosing functions.</p>
-
-<p>Python has support for closures but has its weakness and tweaks.</p>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2015/01/03/closures-in-python/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/12/16/one-beautiful-aspect-of-immutable-data-structures/">One Beautiful Aspect of Immutable Data Structures</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-12-16T22:22:41-08:00" pubdate data-updated="true">Dec 16<span>th</span>, 2013</time>
-        
-           | <a href="/blog/2013/12/16/one-beautiful-aspect-of-immutable-data-structures/#disqus_thread"
-             data-disqus-identifier="http://jduan.github.io/blog/2013/12/16/one-beautiful-aspect-of-immutable-data-structures/">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>I stumbled upon this <a href="http://www.careercup.com/question?id=5361917182869504">interview question</a> the other day.
-It&rsquo;s not particularly difficult. However, I started appreciating immutable data
-structures more after actually coding up a solution.</p>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2013/12/16/one-beautiful-aspect-of-immutable-data-structures/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/12/15/tcpdump-on-localhost/">Tcpdump on Localhost</a></h1>
+      <h1 class="entry-title">Tcpdump on Localhost</h1>
     
     
       <p class="meta">
@@ -185,39 +88,62 @@ structures more after actually coding up a solution.</p>
 
 <time datetime="2013-12-15T15:03:14-08:00" pubdate data-updated="true">Dec 15<span>th</span>, 2013</time>
         
-           | <a href="/blog/2013/12/15/tcpdump-on-localhost/#disqus_thread"
-             data-disqus-identifier="http://jduan.github.io/blog/2013/12/15/tcpdump-on-localhost/">Comments</a>
+           | <a href="#disqus_thread"
+             data-disqus-identifier="http://jduan.github.io">Comments</a>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p><a href="http://en.wikipedia.org/wiki/Tcpdump">tcpdump</a> is a powerful tool that allows
+<div class="entry-content"><p><a href="http://en.wikipedia.org/wiki/Tcpdump">tcpdump</a> is a powerful tool that allows
 you to capture TCP/IP traffic over a network. It can be too smart sometimes.
 Here&rsquo;s a story of how I got baffled about tcpdump.</p>
 
+<!-- more -->
+
+
+<p>I was debugging some weird behavior of a production service and thought I&rsquo;d
+bring up a local instance of the service, do a tcpdump, and see what&rsquo;s going on.</p>
+
+<p>I made sure I only had one Internet interface running (en0). I started tcpdump
+capturing traffic on that interface: <code>tcpdump -i en0 port 8080</code>. Then I pointed
+a local client to talk to it by specifying the IP of the service as
+<strong>10.30.0.86</strong> which is the internal IP of my laptop.</p>
+
+<p>Fired up the client and it was talking to the local service. I saw logs on both
+ends which confirms they were talking to each other. However, surprisingly, I
+didn&rsquo;t see anything on the tcpdump console.</p>
+
+<p>I&rsquo;m not a tcpdump expert, so I fired up <a href="http://www.wireshark.org/">Wireshark</a>
+and then ran the client again. Applied a Wireshark filter that only lists
+traffic between 10.30.0.86 and 10.30.0.86. Not so surprisingly, Wireshark
+displayed no traffic as well.</p>
+
+<p>So what&rsquo;s going on? tcpdump and wireshark haven&rsquo;t failed me much in the past. So
+I trust them. Why are they not working this time?</p>
+
+<p>Fortunately, my team has a linux guy who knows about linux networking well. His
+theory was that the TCP/IP stack of Mac is trying to be smart about
+local IPs. If it detects both the client and the server are running on
+the same local host, it would use the <strong>loopback</strong> interface (ie lo0)
+which apparently is faster than a real IP for some reason.</p>
+
+<p>So I tried again and this time I asked tcpdump to capture traffic on <strong>lo0</strong>.
+Magically, tcpdump started spitting out logs on the console.</p>
+
+<p>Lesson learned.</p>
 </div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2013/12/15/tcpdump-on-localhost/">Read on &rarr;</a>
-    </footer>
-  
 
 
-    </article>
-  
-  
-    <article>
+  <footer>
+    <p class="meta">
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/12/15/debug-cors-on-opera-12/">Debug CORS on Opera 12</a></h1>
-    
-    
-      <p class="meta">
-        
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Jingjing Duan</span></span>
+
+      
 
 
 
@@ -229,43 +155,46 @@ Here&rsquo;s a story of how I got baffled about tcpdump.</p>
   
 
 
-<time datetime="2013-12-15T13:59:46-08:00" pubdate data-updated="true">Dec 15<span>th</span>, 2013</time>
-        
-           | <a href="/blog/2013/12/15/debug-cors-on-opera-12/#disqus_thread"
-             data-disqus-identifier="http://jduan.github.io/blog/2013/12/15/debug-cors-on-opera-12/">Comments</a>
-        
-      </p>
+<time datetime="2013-12-15T15:03:14-08:00" pubdate data-updated="true">Dec 15<span>th</span>, 2013</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/tcp-slash-ip/'>TCP/IP</a>
+  
+</span>
+
+
+    </p>
     
-  </header>
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://jduan.github.io/blog/2013/12/15/tcpdump-on-localhost/" data-via="" data-counturl="http://jduan.github.io/blog/2013/12/15/tcpdump-on-localhost/" >Tweet</a>
+  
+  
+  
+</div>
 
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2013/12/15/debug-cors-on-opera-12/" title="Previous Post: Debug CORS on Opera 12">&laquo; Debug CORS on Opera 12</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2013/12/16/one-beautiful-aspect-of-immutable-data-structures/" title="Next Post: One beautiful aspect of immutable data structures">One beautiful aspect of immutable data structures &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
 
-  <div class="entry-content"><p>Today, I encountered a strange problem with <a href="www.w3.org/TR/cors/">CORS</a>
-(cross-origin resource sharing) on Opera 12. (we have been porting our
-JS application to work on a device that runs Opera 12)</p>
-
-<p>We have a central Authentication service that authenticates users
-and this application is one of the clients. The symptom is when this
-application talks to the Authentication service (via a POST request) it
-keeps getting a zero HTTP status code. In generally, when a browser returns a
-zero status code, it means the browser cancelled the request for some reason.</p>
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
 
 </div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2013/12/15/debug-cors-on-opera-12/">Read on &rarr;</a>
-    </footer>
-  
 
-
-    </article>
-  
-  <div class="pagination">
-    
-    <a href="/blog/archives">Blog Archives</a>
-    
-  </div>
-</div>
 <aside class="sidebar">
   
     <section>
@@ -294,7 +223,7 @@ zero status code, it means the browser cancelled the request for some reason.</p
 <section>
   <h1>GitHub Repos</h1>
   <ul id="gh_repos">
-    <li class="loading">Status updating&#8230;</li>
+    <li class="loading">Status updating...</li>
   </ul>
   
   <a href="https://github.com/jduan">@jduan</a> on GitHub
@@ -327,6 +256,7 @@ zero status code, it means the browser cancelled the request for some reason.</p
   
 </aside>
 
+
     </div>
   </div>
   <footer role="contentinfo"><p>
@@ -341,7 +271,10 @@ zero status code, it means the browser cancelled the request for some reason.</p
       var disqus_shortname = 'jduan-github-io';
       
         
-        var disqus_script = 'count.js';
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://jduan.github.io/blog/2013/12/15/tcpdump-on-localhost/';
+        var disqus_url = 'http://jduan.github.io/blog/2013/12/15/tcpdump-on-localhost/';
+        var disqus_script = 'embed.js';
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;

@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Immutable Data Structures | Furious Programming]]></title>
+  <link href="http://jduan.github.io/blog/categories/immutable-data-structures/atom.xml" rel="self"/>
+  <link href="http://jduan.github.io/"/>
+  <updated>2015-01-03T23:59:25-08:00</updated>
+  <id>http://jduan.github.io/</id>
+  <author>
+    <name><![CDATA[Jingjing Duan]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[One Beautiful Aspect of Immutable Data Structures]]></title>
+    <link href="http://jduan.github.io/blog/2013/12/16/one-beautiful-aspect-of-immutable-data-structures/"/>
+    <updated>2013-12-16T22:22:41-08:00</updated>
+    <id>http://jduan.github.io/blog/2013/12/16/one-beautiful-aspect-of-immutable-data-structures</id>
+    <content type="html"><![CDATA[<p>I stumbled upon this <a href="http://www.careercup.com/question?id=5361917182869504">interview question</a> the other day.
+It&rsquo;s not particularly difficult. However, I started appreciating immutable data
+structures more after actually coding up a solution.</p>
+
+<!-- more -->
+
+
+<p>First, I tried to code it up in my favorite language, Ruby. Here&rsquo;s the solution:</p>
+
+<p>``` ruby
+def find(arr)
+  num_list = [arr]
+  find_recur(arr, num_list)
+end</p>
+
+<p>def find_recur(arr, num_list)
+  if num_list.size == (2 ** arr.size)</p>
+
+<pre><code>puts "found numbers"
+num_list.each do |l|
+  p l
+end
+exit
+</code></pre>
+
+<p>  end
+  new_arr = shift_array(arr)
+  arr0 = add_to_array(new_arr, &ldquo;0&rdquo;)
+  arr1 = add_to_array(new_arr, &ldquo;1&rdquo;)
+  unless num_list.member? arr0</p>
+
+<pre><code>find_recur(arr0, add_to_array(num_list, arr0))
+</code></pre>
+
+<p>  end
+  unless num_list.member? arr1</p>
+
+<pre><code>find_recur(arr1, add_to_array(num_list, arr1))
+</code></pre>
+
+<p>  end
+end</p>
+
+<p>def add_to_array(arr, element)
+  dup = arr.dup
+  dup.push element
+end</p>
+
+<p>def shift_array(arr)
+  dup = arr.dup
+  dup.shift</p>
+
+<p>  dup
+end</p>
+
+<p>def pad(str, size)
+  &ldquo;0&rdquo; * (size &ndash; str.size) + str
+end</p>
+
+<p>N = 32
+size = N.to_s(2).size &ndash; 1
+N.times do |i|
+  arr = pad(i.to_s(2), size).split(//)
+  find(arr)
+end</p>
+
+<p>```</p>
+
+<p>Here&rsquo;s the consecutive bits found:</p>
+
+<pre><code>5 bits: ["0", "0", "0", "0", "0"]
+5 bits: ["0", "0", "0", "0", "1"]
+5 bits: ["0", "0", "0", "1", "0"]
+5 bits: ["0", "0", "1", "0", "0"]
+5 bits: ["0", "1", "0", "0", "0"]
+5 bits: ["1", "0", "0", "0", "1"]
+5 bits: ["0", "0", "0", "1", "1"]
+5 bits: ["0", "0", "1", "1", "0"]
+5 bits: ["0", "1", "1", "0", "0"]
+5 bits: ["1", "1", "0", "0", "1"]
+5 bits: ["1", "0", "0", "1", "0"]
+5 bits: ["0", "0", "1", "0", "1"]
+5 bits: ["0", "1", "0", "1", "0"]
+5 bits: ["1", "0", "1", "0", "0"]
+5 bits: ["0", "1", "0", "0", "1"]
+5 bits: ["1", "0", "0", "1", "1"]
+5 bits: ["0", "0", "1", "1", "1"]
+5 bits: ["0", "1", "1", "1", "0"]
+5 bits: ["1", "1", "1", "0", "1"]
+5 bits: ["1", "1", "0", "1", "0"]
+5 bits: ["1", "0", "1", "0", "1"]
+5 bits: ["0", "1", "0", "1", "1"]
+5 bits: ["1", "0", "1", "1", "0"]
+5 bits: ["0", "1", "1", "0", "1"]
+5 bits: ["1", "1", "0", "1", "1"]
+5 bits: ["1", "0", "1", "1", "1"]
+5 bits: ["0", "1", "1", "1", "1"]
+5 bits: ["1", "1", "1", "1", "1"]
+5 bits: ["1", "1", "1", "1", "0"]
+5 bits: ["1", "1", "1", "0", "0"]
+5 bits: ["1", "1", "0", "0", "0"]
+5 bits: ["1", "0", "0", "0", "0"]
+</code></pre>
+
+<p>This code works. However, I have to make copies of arrays when building new
+arrays. (methods: <em>add_to_array</em> and <em>shift_array</em>)</p>
+
+<p>Then I tried to code it up in Ruby with the help of
+<a href="https://github.com/harukizaemon/hamster">Hamster</a> this time. Hamster is a
+collection of immutable data structures written in ruby as a gem.</p>
+
+<p>Here&rsquo;s the new code:</p>
+
+<p>``` ruby
+require &lsquo;hamster&rsquo;</p>
+
+<p>def find(arr)
+  num_list = Hamster.list(arr)
+  find_recur(arr, num_list)
+end</p>
+
+<h1>arr is the current number</h1>
+
+<h1>num_list is the numbers found so far</h1>
+
+<h1>Note: we are using immutable data structures here. Otherwise, we have to</h1>
+
+<h1>create copies of arrays when modifying arr and num_list.</h1>
+
+<p>def find_recur(arr, num_list)
+  if num_list.size == (2 ** arr.size)</p>
+
+<pre><code>puts "found numbers"
+num_list.each do |l|
+  p l
+end
+exit
+</code></pre>
+
+<p>  end
+  arr0 = arr.tail.append(Hamster.list(&ldquo;0&rdquo;))
+  arr1 = arr.tail.append(Hamster.list(&ldquo;1&rdquo;))
+  unless num_list.member? arr0</p>
+
+<pre><code>find_recur(arr0, num_list.cons(arr0))
+</code></pre>
+
+<p>  end
+  unless num_list.member? arr1</p>
+
+<pre><code>find_recur(arr1, num_list.cons(arr1))
+</code></pre>
+
+<p>  end
+end</p>
+
+<h1>Prefix &ldquo;0&rdquo; to a str given the total size.</h1>
+
+<p>def pad(str, size)
+  &ldquo;0&rdquo; * (size &ndash; str.size) + str
+end</p>
+
+<p>N = 32
+size = N.to_s(2).size &ndash; 1
+N.times do |i|
+  arr = pad(i.to_s(2), size).split(//)
+  find(Hamster.list(*arr))
+end
+```</p>
+
+<p>You can see the code is much simpler. Instead of doing defensive copies of
+arrays, I simply do <strong>arr.tail.append(Hamster.list(&ldquo;0&rdquo;))</strong>. New arrays are
+created and old arrays are preserved. The recursive calls can use the new arrays
+freely, including &ldquo;updating&rdquo; them.</p>
+]]></content>
+  </entry>
+  
+</feed>

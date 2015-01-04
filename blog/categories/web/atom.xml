@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Web | Furious Programming]]></title>
+  <link href="http://jduan.github.io/blog/categories/web/atom.xml" rel="self"/>
+  <link href="http://jduan.github.io/"/>
+  <updated>2015-01-03T23:59:25-08:00</updated>
+  <id>http://jduan.github.io/</id>
+  <author>
+    <name><![CDATA[Jingjing Duan]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Debug CORS on Opera 12]]></title>
+    <link href="http://jduan.github.io/blog/2013/12/15/debug-cors-on-opera-12/"/>
+    <updated>2013-12-15T13:59:46-08:00</updated>
+    <id>http://jduan.github.io/blog/2013/12/15/debug-cors-on-opera-12</id>
+    <content type="html"><![CDATA[<p>Today, I encountered a strange problem with <a href="www.w3.org/TR/cors/">CORS</a>
+(cross-origin resource sharing) on Opera 12. (we have been porting our
+JS application to work on a device that runs Opera 12)</p>
+
+<p>We have a central Authentication service that authenticates users
+and this application is one of the clients. The symptom is when this
+application talks to the Authentication service (via a POST request) it
+keeps getting a zero HTTP status code. In generally, when a browser returns a
+zero status code, it means the browser cancelled the request for some reason.</p>
+
+<!-- more -->
+
+
+<p>Why could Opera cancel a request to the Authentication service? (Note
+that our application works fine on Chrome). Upon reading docs of CORS, I
+realize that certain CORS requests (say POST) require a <strong>preflight</strong> request
+before actually issuing the real request. Maybe it is this &ldquo;preflight&rdquo;
+request that keeps failing and it prevents Opera from issuing a real
+POST request?</p>
+
+<p>To see the traffic between the application and the Authentication service, I ran
+a &ldquo;nodejs proxy&rdquo; between them which simply logs all the requests and responses.
+The logs confirm that Opera only sends a preflight request but doesn&rsquo;t send a
+real POST request.</p>
+
+<p>Why? Is it possible that the Authentication service doesn&rsquo;t implement the CORS
+standard properly? Let&rsquo;s check the related headers. The following are the
+response headers related to CORS:</p>
+
+<ul>
+<li>Access-Control-Allow-Origin</li>
+<li>Access-Control-Max-Age</li>
+<li>Access-Control-Allow-Credentials</li>
+<li>Access-Control-Allow-Methods</li>
+<li>Access-Control-Allow-Headers</li>
+</ul>
+
+
+<p>The Authentication service returns the following headers:</p>
+
+<ul>
+<li>Access-Control-Allow-Origin: the-origin-of-our-app</li>
+<li>Access-Control-Max-Age: this header isn&rsquo;t set</li>
+<li>Access-Control-Allow-Credentials: true</li>
+<li>Access-Control-Allow-Methods: POST, GET, OPTIONS</li>
+<li>Access-Control-Allow-Headers: a lot of headers including Authentication</li>
+</ul>
+
+
+<p>It seems all the headers make sense. Why does our app work on Chrome, but not
+Opera? Eventually the HTTP status code for the preflight request caught my eyes.
+The Authentication service returns <strong>204</strong> for the preflight request. Accordingly to
+HTTP standard, <strong>2xx</strong> codes generally mean success. <strong>However, all previous versions
+of the CORS standard (<a href="http://www.w3.org/TR/cors/">http://www.w3.org/TR/cors/</a>) except the latest (12/05/2013)
+mandate only 200 means success.</strong> In other words, 204 would mean a failure, which
+is why Opera believes the preflight request failed and refuses to send a real
+POST request.</p>
+
+<p>Opera is obviously still complying with the previous versions of the
+CORS standard, which is reasonable considering the latest version of the CORS
+standard only came out a few days ago. It takes time to catch up with
+the ever-evolving CORS standard.</p>
+
+<p>Chrome, on the other hand, seems to treat any 2xx codes as success. Either they
+are extremely up to date or they&rsquo;ve always treated 2xx codes as success.</p>
+
+<p>The moral of the story is the specs of a standard is every important and
+contains pretty much everything you need. Read it carefully.</p>
+]]></content>
+  </entry>
+  
+</feed>

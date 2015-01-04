@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: TCP/IP | Furious Programming]]></title>
+  <link href="http://jduan.github.io/blog/categories/tcp-slash-ip/atom.xml" rel="self"/>
+  <link href="http://jduan.github.io/"/>
+  <updated>2015-01-03T23:59:25-08:00</updated>
+  <id>http://jduan.github.io/</id>
+  <author>
+    <name><![CDATA[Jingjing Duan]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Tcpdump on Localhost]]></title>
+    <link href="http://jduan.github.io/blog/2013/12/15/tcpdump-on-localhost/"/>
+    <updated>2013-12-15T15:03:14-08:00</updated>
+    <id>http://jduan.github.io/blog/2013/12/15/tcpdump-on-localhost</id>
+    <content type="html"><![CDATA[<p><a href="http://en.wikipedia.org/wiki/Tcpdump">tcpdump</a> is a powerful tool that allows
+you to capture TCP/IP traffic over a network. It can be too smart sometimes.
+Here&rsquo;s a story of how I got baffled about tcpdump.</p>
+
+<!-- more -->
+
+
+<p>I was debugging some weird behavior of a production service and thought I&rsquo;d
+bring up a local instance of the service, do a tcpdump, and see what&rsquo;s going on.</p>
+
+<p>I made sure I only had one Internet interface running (en0). I started tcpdump
+capturing traffic on that interface: <code>tcpdump -i en0 port 8080</code>. Then I pointed
+a local client to talk to it by specifying the IP of the service as
+<strong>10.30.0.86</strong> which is the internal IP of my laptop.</p>
+
+<p>Fired up the client and it was talking to the local service. I saw logs on both
+ends which confirms they were talking to each other. However, surprisingly, I
+didn&rsquo;t see anything on the tcpdump console.</p>
+
+<p>I&rsquo;m not a tcpdump expert, so I fired up <a href="http://www.wireshark.org/">Wireshark</a>
+and then ran the client again. Applied a Wireshark filter that only lists
+traffic between 10.30.0.86 and 10.30.0.86. Not so surprisingly, Wireshark
+displayed no traffic as well.</p>
+
+<p>So what&rsquo;s going on? tcpdump and wireshark haven&rsquo;t failed me much in the past. So
+I trust them. Why are they not working this time?</p>
+
+<p>Fortunately, my team has a linux guy who knows about linux networking well. His
+theory was that the TCP/IP stack of Mac is trying to be smart about
+local IPs. If it detects both the client and the server are running on
+the same local host, it would use the <strong>loopback</strong> interface (ie lo0)
+which apparently is faster than a real IP for some reason.</p>
+
+<p>So I tried again and this time I asked tcpdump to capture traffic on <strong>lo0</strong>.
+Magically, tcpdump started spitting out logs on the console.</p>
+
+<p>Lesson learned.</p>
+]]></content>
+  </entry>
+  
+</feed>
